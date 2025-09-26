@@ -153,11 +153,11 @@ class SerialCtrl():
         self.ser.reset_input_buffer()
         self.ser.reset_output_buffer()       
         COM.stop_button["state"] = "active"
+        COM.UpdateChart()
 
         while self.threading and (tech==2):
             try:
                 data.RowMsg = self.ser.readline()
-                #print(data.RowMsg)
                 data.DecodeMsgC()
                 if len(data.RowMsg)>0:
                     data.setRefTime()
@@ -169,7 +169,7 @@ class SerialCtrl():
                 print(e)
                 pass
 
-        COM.UpdateChart()
+
         while self.threading and (tech==2):
             try:
                 data.RowMsg = self.ser.readline()
@@ -202,7 +202,17 @@ class SerialCtrl():
 
         while self.threading and (not (tech==2)):
             try:
-                data.RowMsg = self.ser.readline()
+                read_ = True
+                buffer = b''
+                while read_:
+                    # Leer lo que haya en el puerto (si no hay nada, sigue el loop)
+                    chunk = self.ser.read()
+                    buffer += chunk
+                    if b'\r\n' in buffer:
+                        read_ = False
+                    # Mientras haya un mensaje completo en el buffer
+                            
+                data.RowMsg = buffer
                 data.DecodeMsg()
                 if len(data.RowMsg)>0:
                     if b'N' in data.RowMsg:
@@ -235,8 +245,6 @@ class SerialCtrl():
                     data.upXData()
                     data.upYData(tech)
                     data.msg=[]
-                    self.ser.reset_input_buffer()
-                    self.ser.reset_output_buffer()
                     pass
                 pass
             except Exception as e:
