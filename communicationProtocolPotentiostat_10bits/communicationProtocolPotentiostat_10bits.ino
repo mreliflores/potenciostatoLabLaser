@@ -40,7 +40,6 @@ void loop() {
     
     if (str == sync_fromApp) {
       Serial.println(sync_ok);
-      //Serial.flush();
     }
 
     while (str.length() > 0) {
@@ -65,13 +64,13 @@ void loop() {
     int t_step_chro = strs[7].toInt();
     int t_stab = strs[8].toInt();
     
-    float e00 = ((9970.0 / (9970+9960)) * 5.03 + (9970.0 / 9860.0) * E0);
-    PWM_0 = e00 * (1023 / 4.97); //Starting Voltage
-    float eii = ((9970.0 / (9970+9960)) * 5.03 + (9970.0 / 9860.0) * Ei);
-    PWM_i = eii * (1023 / 4.97); //Min Voltage
-    float eff = ((9970.0 / (9970+9960)) * 5.03 + (9970.0 / 9860.0) * Ef);
-    PWM_f = eff * (1023 / 4.97); //Max Voltage
-    long t = (4960000L) / (1024L * scan_rate); //delay scan rate
+    float e00 = ((21060.0 / (41860.0)) * 5.117 + (21060.0 / 20240) * E0);
+    PWM_0 = e00 * (1023 / 5.015); //Starting Voltage
+    float eii = ((21060.0 / (41860.0)) * 5.117 + (21060.0 / 20240) * Ei);
+    PWM_i = eii * (1023 / 5.015); //Min Voltage
+    float eff = ((21060.0 / (41860.0)) * 5.117 + (21060.0 / 20240) * Ef);
+    PWM_f = eff * (1023 / 5.015); //Max Voltage
+    long t = (5015000L) / (1024L * scan_rate); //delay scan rate
     int t_count = t_chro/t_step_chro;
 
     if (PWM_f > 1023 || PWM_i > 1023 || PWM_0 > 1023){
@@ -107,50 +106,28 @@ void loop() {
           for (int val = PWM_0; val < PWM_f  && !Serial.available(); val++) {
             Timer1.pwm(pwm, val);
 
-            volt = 0.0048046584*val-2.490;
-            cur = 0.4935*analogRead(A0)-249.145;
+            volt = 0.004711640625*val-2.477;
+            cur = 0.4960*analogRead(A4)-257.151;
 
             Serial.print(volt, 3);
             Serial.print('x');
             Serial.print(cur, 3);
             Serial.println('x');
             Serial.flush();
-            //if (Serial.available() > 0){
-              //delay(1000);
-              //Serial.println("Nx");
-              //break;
-            //}
             delay(t);
-            //if (Serial.available() > 0){
-              //delay(1000);
-              //Serial.println("Nx");
-              //break;
-            //}
-            
           }
 
           for (int val = PWM_f; val > PWM_i  && !Serial.available(); val--) {
             Timer1.pwm(pwm, val);
             
-            volt = 0.0048046584*val-2.490;
-            cur = 0.4935*analogRead(A0)-249.145;
-            //cur_ave = analogRead(A0);
+            volt = 0.004711640625*val-2.477;
+            cur = 0.4960*analogRead(A4)-257.151;
             Serial.print(volt, 3);
             Serial.print('x');
             Serial.print(cur, 3);
             Serial.println('x');
             Serial.flush();
-            //if (Serial.available() > 0){
-              //delay(1000);
-              //Serial.println("Nx");
-              //break;
-            //}
             delay(t);
-            //if (Serial.available() > 0){
-              //delay(1000);
-              //Serial.println("Nx");
-              //break;
-            //}
           }
           PWM_0 = PWM_i;
         }
@@ -167,25 +144,15 @@ void loop() {
           for (int val = PWM_i; val < PWM_f  && !Serial.available(); val++) {
             Timer1.pwm(pwm, val);
 
-            volt = 0.0048046584*val-2.490;
-            cur = 0.4935*analogRead(A0)-249.145;
+            volt = 0.004711640625*val-2.477;
+            cur = 0.4960*analogRead(A4)-257.151;
 
             Serial.print(volt, 3);
             Serial.print('x');
             Serial.print(cur, 3);
             Serial.println('x');
             Serial.flush();
-            /*if (Serial.available() > 0){
-              delay(1000);
-              Serial.println("Nx");
-              break;
-            }*/
             delay(t);
-            /*if (Serial.available() > 0){
-              delay(1000);
-              Serial.println("Nx");
-              break;
-            }*/
           } 
         }
         Serial.println("Nx");
@@ -197,21 +164,11 @@ void loop() {
       case 2:
         for (int n = 1; n<=t_count && !Serial.available(); n++){
           Timer1.pwm(pwm, PWM_0);
-          cur = 0.4935 * (analogRead(A0)) - 249.145;
+          cur = 0.4960 * (analogRead(A4)) - 257.151;
           Serial.print(cur, 3);
           Serial.println('x');
           Serial.flush();
-         /* if (Serial.available() > 0){
-            delay(1000);
-            Serial.println("Nx");
-            break;
-          }*/
           delay(t_step_chro*1000);
-          /*if (Serial.available() > 0){
-            delay(1000);
-            Serial.println("Nx");
-            break;
-          }*/
         }
         Serial.println("Nx");
         Serial.flush();
